@@ -1,67 +1,215 @@
-// CREATION OF THE PROJECTION
-CALL gds.graph.create(
-    'LoLGraph',
-    ['Champion', 'Position', 'Role', 'Item', 'Spell'],
-    {
-        POPULAR_POSITION: {
-            type: 'HAS_POPULAR_POSITION'
-        },
+// CREATION OF THE GRAPH
 
-        HAS_ROLE: {
-            type: 'HAS_ROLE'
-        },
+//---------- Champions ----------\\
 
-        HAS_STARTER_ITEM: {
-            type: 'HAS_STARTER_ITEM'
-        },
+CREATE (aatrox:Champion {name:'Aatrox'}),
+(riven:Champion {name:'Riven'}),
+(ahri:Champion {name:'Ahri'}),
+(ryze:Champion {name:'Ryze'}),
+(fizz:Champion {name:'Fizz'}),
+(leBlanc:Champion {name:'LeBlanc'}),
+(xerath:Champion {name:'Xerath'}),
+(caitlyn:Champion {name:'Caitlyn'}),
+(illaoi:Champion {name:'Illaoi'}),
+(anivia:Champion {name:'Anivia'}),
+(teemo:Champion {name:'Teemo'}),
+(yorick:Champion {name:'Yorick'}),
+(zed:Champion {name:'Zed'}),
+(veigar:Champion {name:'Veigar'}),
+(zac:Champion {name:'Zac'}),
+(thresh:Champion {name:'Thresh'}),
+(leona:Champion {name:'Leona'}),
+(jinx:Champion {name:'Jinx'}),
+(viego:Champion {name:'Viego'}),
+(qiyana:Champion {name:'Qiyana'}),
 
- 
-        HAS_POPULAR_SPELL: {
-            type: 'HAS_POPULAR_SPELL'
-        },
+//---------- Positions ----------\\
 
-        HAS_COUNTER: {
-            type: 'HAS_COUNTER'
-        }
-    }
-);
+(top:Position {name:'Top'}),
+(mid:Position {name:'Mid'}),
+(bottom:Position {name:'Bottom'}),
+(jungle:Position {name:'Jungle'}),
 
-// AlGORITHM COST
-CALL gds.nodeSimilarity.write.estimate(
-    'LoLGraph', {
-        writeRelationshipType: 'SIMILAR',
-        writeProperty: 'score'
-    })
-YIELD nodeCount, relationshipCount, bytesMin, bytesMax, requiredMemory, treeView
+//---------- Roles ----------\\
 
-// GRAPH COST
-CALL gds.graph.create.estimate('*', '*', {
-  nodeCount: 46,
-  relationshipCount: 131,
-  nodeProperties: 'name'
-})
-YIELD nodeCount, relationshipCount, bytesMin, bytesMax, requiredMemory, treeView
+(fighter:Role {name:'Fighter'}),
+(assassin:Role {name:'Assassin'}),
+(tank:Role {name:'Tank'}),
+(support:Role {name:'Support'}),
+(marksman:Role {name:'Marksman'}),
+(mage:Role {name:'Mage'}),
 
-// SIMILARITY BETWEEN ALL CHAMPIONS IN ALPHABETICAL ORDER
-CALL gds.nodeSimilarity.stream('LoLGraph', {topK: 19})  
-YIELD node1, node2, similarity
-RETURN gds.util.asNode(node1).name AS Champion1, gds.util.asNode(node2).name AS Champion2, similarity
-ORDER BY node1 ASCENDING, Champion1, Champion2
+//---------- Items ----------\\
 
-// SIMILARITY BETWEEN ALL CHAMPIONS ORDERED BY DESCENDING SIMILARITY
-CALL gds.nodeSimilarity.stream('LoLGraph', {topK: 19})  
-YIELD node1, node2, similarity
-RETURN gds.util.asNode(node1).name AS Champion1, gds.util.asNode(node2).name AS Champion2, similarity
-ORDER BY similarity DESCENDING, Champion1, Champion2
+(doransRing:Item {name:'DoransRing'}),
+(doransBlade:Item {name:'DoransBlade'}),
+(doransShield:Item {name:'DoransShield'}),
+(corruptingPotion:Item {name:'CorruptingPotion'}),
+(longSword:Item {name:'LongSword'}),
+(hailblade:Item {name:'Hailblade'}),
+(steelShoulderguards:Item {name:'SteelShoulderguards'}),
+(relicShield:Item {name:'RelicShield'}),
+(emberknife:Item {name:'emberKnife'}),
 
-// CHAMPION AND HIS OTHER MOST SIMILAR CHAMPION
-CALL gds.nodeSimilarity.stream('LoLGraph', {topK: 1})  
-YIELD node1, node2, similarity
-RETURN gds.util.asNode(node1).name AS Champion1, gds.util.asNode(node2).name AS Champion2, similarity
-ORDER BY similarity DESCENDING, Champion1, Champion2
+//---------- Spell ----------\\ 
 
-// CHAMPION AND HIS OTHER LESS SIMILAR CHAMPION
-CALL gds.nodeSimilarity.stream('LoLGraph', {bottomK: 1})  
-YIELD node1, node2, similarity
-RETURN gds.util.asNode(node1).name AS Champion1, gds.util.asNode(node2).name AS Champion2, similarity
-ORDER BY similarity DESCENDING, Champion1, Champion2
+(ignite:Spell {name:'Ignite'}),
+(heal:Spell {name:'Heal'}),
+(flash:Spell {name:'Flash'}),
+(teleport:Spell {name:'Teleport'}),
+(exhaust:Spell {name:'Exhaust'}),
+(barrier:Spell {name:'Barrier'}),
+(smite:Spell {name:'Smite'}),
+
+//---------- Relation champion ----------\\ 
+
+(aatrox)-[:HAS_POPULAR_POSITION]->(top),
+(aatrox)-[:HAS_ROLE]->(fighter),
+(aatrox)-[:HAS_COUNTER]->(riven),
+(aatrox)-[:HAS_COUNTER]->(yorick),
+(aatrox)-[:HAS_COUNTER]->(illaoi),
+(aatrox)-[:HAS_POPULAR_SPELL]->(ignite),
+(aatrox)-[:HAS_POPULAR_SPELL]->(flash),
+(aatrox)-[:HAS_STARTER_ITEM]->(doransBlade),
+
+(xerath)-[:HAS_POPULAR_POSITION]->(mid),
+(xerath)-[:HAS_ROLE]->(mage),
+(xerath)-[:HAS_COUNTER]->(ahri),
+(xerath)-[:HAS_COUNTER]->(fizz),
+(xerath)-[:HAS_COUNTER]->(leBlanc),
+(xerath)-[:HAS_POPULAR_SPELL]->(heal),
+(xerath)-[:HAS_POPULAR_SPELL]->(flash),
+(xerath)-[:HAS_STARTER_ITEM]->(doransRing),
+
+(fizz)-[:HAS_POPULAR_POSITION]->(mid),
+(fizz)-[:HAS_ROLE]->(mage),
+(fizz)-[:HAS_COUNTER]->(ryze),
+(fizz)-[:HAS_POPULAR_SPELL]->(ignite),
+(fizz)-[:HAS_POPULAR_SPELL]->(flash),
+(fizz)-[:HAS_STARTER_ITEM]->(doransRing),
+
+(riven)-[:HAS_POPULAR_POSITION]->(top),
+(riven)-[:HAS_ROLE]->(fighter),
+(riven)-[:HAS_COUNTER]->(illaoi),
+(riven)-[:HAS_POPULAR_SPELL]->(teleport),
+(riven)-[:HAS_POPULAR_SPELL]->(flash),
+(riven)-[:HAS_STARTER_ITEM]->(doransBlade),
+
+(illaoi)-[:HAS_POPULAR_POSITION]->(top),
+(illaoi)-[:HAS_ROLE]->(fighter),
+(illaoi)-[:HAS_COUNTER]->(yorick),
+(illaoi)-[:HAS_POPULAR_SPELL]->(teleport),
+(illaoi)-[:HAS_POPULAR_SPELL]->(flash),
+(illaoi)-[:HAS_STARTER_ITEM]->(corruptingPotion),
+
+(caitlyn)-[:HAS_POPULAR_POSITION]->(bottom),
+(caitlyn)-[:HAS_ROLE]->(marksman),
+(caitlyn)-[:HAS_COUNTER]->(veigar),
+(caitlyn)-[:HAS_POPULAR_SPELL]->(flash),
+(caitlyn)-[:HAS_POPULAR_SPELL]->(heal),
+(caitlyn)-[:HAS_STARTER_ITEM]->(doransBlade),
+
+(veigar)-[:HAS_POPULAR_POSITION]->(mid),
+(veigar)-[:HAS_ROLE]->(mage),
+(veigar)-[:HAS_COUNTER]->(fizz),
+(veigar)-[:HAS_POPULAR_SPELL]->(flash),
+(veigar)-[:HAS_POPULAR_SPELL]->(barrier),
+(veigar)-[:HAS_STARTER_ITEM]->(doransRing),
+
+(ahri)-[:HAS_POPULAR_POSITION]->(mid),
+(ahri)-[:HAS_ROLE]->(mage),
+(ahri)-[:HAS_COUNTER]->(veigar),
+(ahri)-[:HAS_COUNTER]->(fizz),
+(ahri)-[:HAS_POPULAR_SPELL]->(flash),
+(ahri)-[:HAS_POPULAR_SPELL]->(ignite),
+(ahri)-[:HAS_STARTER_ITEM]->(doransRing),
+
+(ryze)-[:HAS_POPULAR_POSITION]->(mid),
+(ryze)-[:HAS_ROLE]->(mage),
+(ryze)-[:HAS_COUNTER]->(ahri),
+(ryze)-[:HAS_POPULAR_SPELL]->(flash),
+(ryze)-[:HAS_POPULAR_SPELL]->(teleport),
+(ryze)-[:HAS_STARTER_ITEM]->(corruptingPotion),
+
+(leBlanc)-[:HAS_POPULAR_POSITION]->(mid),
+(leBlanc)-[:HAS_ROLE]->(mage),
+(leBlanc)-[:HAS_COUNTER]->(anivia),
+(leBlanc)-[:HAS_POPULAR_SPELL]->(flash),
+(leBlanc)-[:HAS_POPULAR_SPELL]->(ignite),
+(leBlanc)-[:HAS_STARTER_ITEM]->(corruptingPotion),
+
+(anivia)-[:HAS_POPULAR_POSITION]->(mid),
+(anivia)-[:HAS_ROLE]->(mage),
+(anivia)-[:HAS_COUNTER]->(ahri),
+(anivia)-[:HAS_COUNTER]->(veigar),
+(anivia)-[:HAS_COUNTER]->(xerath),
+(anivia)-[:HAS_POPULAR_SPELL]->(flash),
+(anivia)-[:HAS_POPULAR_SPELL]->(ignite),
+(anivia)-[:HAS_STARTER_ITEM]->(doransRing),
+
+(teemo)-[:HAS_POPULAR_POSITION]->(top),
+(teemo)-[:HAS_ROLE]->(marksman),
+(teemo)-[:HAS_COUNTER]->(aatrox),
+(teemo)-[:HAS_COUNTER]->(riven),
+(teemo)-[:HAS_POPULAR_SPELL]->(flash),
+(teemo)-[:HAS_POPULAR_SPELL]->(ignite),
+(teemo)-[:HAS_STARTER_ITEM]->(doransRing),
+
+(yorick)-[:HAS_POPULAR_POSITION]->(top),
+(yorick)-[:HAS_ROLE]->(fighter),
+(yorick)-[:HAS_COUNTER]->(riven),
+(yorick)-[:HAS_POPULAR_SPELL]->(flash),
+(yorick)-[:HAS_POPULAR_SPELL]->(teleport),
+(yorick)-[:HAS_STARTER_ITEM]->(doransShield),
+
+(zed)-[:HAS_POPULAR_POSITION]->(mid),
+(zed)-[:HAS_ROLE]->(assassin),
+(zed)-[:HAS_COUNTER]->(anivia),
+(zed)-[:HAS_COUNTER]->(ahri),
+(zed)-[:HAS_POPULAR_SPELL]->(flash),
+(zed)-[:HAS_POPULAR_SPELL]->(ignite),
+(zed)-[:HAS_STARTER_ITEM]->(longSword),
+
+(zac)-[:HAS_POPULAR_POSITION]->(mid),
+(zac)-[:HAS_ROLE]->(tank),
+(zac)-[:HAS_COUNTER]->(qiyana),
+(zac)-[:HAS_POPULAR_SPELL]->(flash),
+(zac)-[:HAS_POPULAR_SPELL]->(smite),
+(zac)-[:HAS_STARTER_ITEM]->(hailblade),
+
+(thresh)-[:HAS_POPULAR_POSITION]->(bottom),
+(thresh)-[:HAS_ROLE]->(support),
+(thresh)-[:HAS_COUNTER]->(leona),
+(thresh)-[:HAS_COUNTER]->(ahri),
+(thresh)-[:HAS_POPULAR_SPELL]->(flash),
+(thresh)-[:HAS_POPULAR_SPELL]->(ignite),
+(thresh)-[:HAS_STARTER_ITEM]->(steelShoulderguards),
+
+(leona)-[:HAS_POPULAR_POSITION]->(bottom),
+(leona)-[:HAS_ROLE]->(tank),
+(leona)-[:HAS_COUNTER]->(xerath),
+(leona)-[:HAS_POPULAR_SPELL]->(flash),
+(leona)-[:HAS_POPULAR_SPELL]->(ignite),
+(leona)-[:HAS_STARTER_ITEM]->(relicShield),
+
+(jinx)-[:HAS_POPULAR_POSITION]->(bottom),
+(jinx)-[:HAS_ROLE]->(marksman),
+(jinx)-[:HAS_COUNTER]->(veigar),
+(jinx)-[:HAS_POPULAR_SPELL]->(flash),
+(jinx)-[:HAS_POPULAR_SPELL]->(heal),
+(jinx)-[:HAS_STARTER_ITEM]->(doransBlade),
+
+(viego)-[:HAS_POPULAR_POSITION]->(jungle),
+(viego)-[:HAS_ROLE]->(assassin),
+(viego)-[:HAS_COUNTER]->(zac),
+(viego)-[:HAS_POPULAR_SPELL]->(flash),
+(viego)-[:HAS_POPULAR_SPELL]->(smite),
+(viego)-[:HAS_STARTER_ITEM]->(emberknife),
+
+(qiyana)-[:HAS_POPULAR_POSITION]->(mid),
+(qiyana)-[:HAS_ROLE]->(assassin),
+(qiyana)-[:HAS_COUNTER]->(fizz),
+(qiyana)-[:HAS_COUNTER]->(veigar),
+(qiyana)-[:HAS_POPULAR_SPELL]->(flash),
+(qiyana)-[:HAS_POPULAR_SPELL]->(ignite),
+(qiyana)-[:HAS_STARTER_ITEM]->(longSword)
