@@ -33,7 +33,7 @@ CREATE (aatrox:Champion {name:'Aatrox'}),
 //---------- Roles ----------\\
 
 (fighter:Role {name:'Fighter'}),
-(assasin:Role {name:'Assasin'}),
+(assassin:Role {name:'Assassin'}),
 (tank:Role {name:'Tank'}),
 (support:Role {name:'Support'}),
 (marksman:Role {name:'Marksman'}),
@@ -41,7 +41,6 @@ CREATE (aatrox:Champion {name:'Aatrox'}),
 
 //---------- Items ----------\\
 
-//(boots:Item {name:'Boots'}),
 (doransRing:Item {name:'DoransRing'}),
 (doransBlade:Item {name:'DoransBlade'}),
 (doransShield:Item {name:'DoransShield'}),
@@ -164,7 +163,7 @@ CREATE (aatrox:Champion {name:'Aatrox'}),
 (yorick)-[:HAS_STARTER_ITEM]->(doransShield),
 
 (zed)-[:HAS_POPULAR_POSITION]->(mid),
-(zed)-[:HAS_ROLE]->(assasin),
+(zed)-[:HAS_ROLE]->(assassin),
 (zed)-[:HAS_COUNTER]->(anivia),
 (zed)-[:HAS_COUNTER]->(ahri),
 (zed)-[:HAS_POPULAR_SPELL]->(flash),
@@ -201,14 +200,14 @@ CREATE (aatrox:Champion {name:'Aatrox'}),
 (jinx)-[:HAS_STARTER_ITEM]->(doransBlade),
 
 (viego)-[:HAS_POPULAR_POSITION]->(jungle),
-(viego)-[:HAS_ROLE]->(assasin),
+(viego)-[:HAS_ROLE]->(assassin),
 (viego)-[:HAS_COUNTER]->(zac),
 (viego)-[:HAS_POPULAR_SPELL]->(flash),
 (viego)-[:HAS_POPULAR_SPELL]->(smite),
 (viego)-[:HAS_STARTER_ITEM]->(emberknife),
 
 (qiyana)-[:HAS_POPULAR_POSITION]->(mid),
-(qiyana)-[:HAS_ROLE]->(assasin),
+(qiyana)-[:HAS_ROLE]->(assassin),
 (qiyana)-[:HAS_COUNTER]->(fizz),
 (qiyana)-[:HAS_COUNTER]->(veigar),
 (qiyana)-[:HAS_POPULAR_SPELL]->(flash),
